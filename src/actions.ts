@@ -25,7 +25,7 @@ export const handleRedirectCallbackAction = createAction.async<void, HandleRedir
   "HANDLE_REDIRECT_CALLBACK",
 );
 
-export type Auth0ProviderActions =
+export type Auth0ProviderAction =
   | ReturnType<typeof auth0Loaded>
   | ReturnType<typeof loginWithPopupAction.started>
   | ReturnType<typeof loginWithPopupAction.done>

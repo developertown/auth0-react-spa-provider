@@ -2,7 +2,7 @@ import "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 import { createContext, Dispatch } from "react";
 
-import { Auth0ProviderActions } from "./actions";
+import { Auth0ProviderAction } from "./actions";
 
 export interface TokenUser {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,7 +76,7 @@ export const isHandlingRedirectState = (state: Auth0ProviderState): state is Han
 
 interface Auth0ProviderValues {
   state: Auth0ProviderState;
-  dispatch: Dispatch<Auth0ProviderActions>;
+  dispatch: Dispatch<Auth0ProviderAction>;
 }
 
 export const Auth0ProviderContext = createContext<Auth0ProviderValues | undefined>(undefined);

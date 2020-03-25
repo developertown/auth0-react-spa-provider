@@ -2,7 +2,7 @@ import createAuth0Client from "@auth0/auth0-spa-js";
 import React, { Reducer, useReducer } from "react";
 import { useAsync, useLocation } from "react-use";
 
-import { auth0Loaded, Auth0ProviderActions, handleRedirectCallbackAction, loginWithPopupAction } from "./actions";
+import { auth0Loaded, Auth0ProviderAction, handleRedirectCallbackAction, loginWithPopupAction } from "./actions";
 import { useLog } from "./hooks";
 import { auth0ProviderStateReducer } from "./reducer";
 import {
@@ -36,7 +36,7 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
 }) => {
   const log = useLog(enableDebugLogging);
 
-  const [state, dispatch] = useReducer<Reducer<Auth0ProviderState, Auth0ProviderActions>>(
+  const [state, dispatch] = useReducer<Reducer<Auth0ProviderState, Auth0ProviderAction>>(
     auth0ProviderStateReducer,
     InitialReducerState,
   );
