@@ -35,6 +35,7 @@ export type LoadingState = {
   popupOpen: false;
   user: undefined;
   auth0Client: undefined;
+  handlingRedirect: false;
 };
 
 export type UnauthenticatedState = ProviderStateCallbacks & {
@@ -73,7 +74,7 @@ export const isLoadedState = (state: Auth0ProviderState): state is Authenticated
   isUnauthenticatedState(state) || isAuthenticatedState(state);
 
 export const isHandlingRedirectState = (state: Auth0ProviderState): state is HandlingRedirectState =>
-  isLoadedState(state) && "handlingRedirect" in state;
+  isLoadedState(state) && "handlingRedirect" in state && state.handlingRedirect;
 
 interface Auth0ProviderValues {
   state: Auth0ProviderState;

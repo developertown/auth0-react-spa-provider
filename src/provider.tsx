@@ -1,5 +1,6 @@
 import createAuth0Client from "@auth0/auth0-spa-js";
-import React, { Reducer, useReducer } from "react";
+import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
+import React, { Dispatch, Reducer, useReducer } from "react";
 import { useAsync, useLocation } from "react-use";
 
 import { auth0Loaded, Auth0ProviderAction, handleRedirectCallbackAction, loginWithPopupAction } from "./actions";
@@ -26,6 +27,37 @@ const InitialReducerState: LoadingState = {
   popupOpen: false,
   user: undefined,
   auth0Client: undefined,
+  handlingRedirect: false,
+};
+
+const buildHandleRedirectCallback = (dispatch: Dispatch<Auth0ProviderAction>, auth0Client: Auth0Client) => async (
+  url?: string,
+): Promise<RedirectLoginResult> => {
+  dispatch(handleRedirectCallbackAction.started());
+
+  const response = await auth0Client.handleRedirectCallback(url);
+  const user = await auth0Client.getUser();
+
+  dispatch(handleRedirectCallbackAction.done({ result: { user } }));
+
+  return response;
+};
+
+const buildLoginWithPopup = (dispatch: Dispatch<Auth0ProviderAction>, auth0Client: Auth0Client) => async (
+  options?: PopupLoginOptions,
+  config?: PopupConfigOptions,
+): Promise<void> => {
+  dispatch(loginWithPopupAction.started());
+
+  try {
+    await auth0Client.loginWithPopup(options, config);
+  } catch (error) {
+    console.error(error);
+  }
+
+  const user = await auth0Client.getUser();
+
+  dispatch(loginWithPopupAction.done({ result: { user } }));
 };
 
 export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
@@ -53,42 +85,9 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
 
     const auth0Client = await createAuth0Client(initOptions);
 
-    const handleRedirectCallback = async (url?: string): Promise<RedirectLoginResult> => {
-      if (isLoadingState(state)) {
-        throw new Error("Unable to loginWithRedirect until the auth0 client is loaded");
-      }
+    const handleRedirectCallback = buildHandleRedirectCallback(dispatch, auth0Client);
 
-      const { auth0Client } = state;
-
-      dispatch(handleRedirectCallbackAction.started());
-
-      const response = await auth0Client.handleRedirectCallback(url);
-      const user = await auth0Client.getUser();
-
-      dispatch(handleRedirectCallbackAction.done({ result: { user } }));
-
-      return response;
-    };
-
-    const loginWithPopup = async (options?: PopupLoginOptions, config?: PopupConfigOptions): Promise<void> => {
-      if (isLoadingState(state)) {
-        throw new Error("Unable to loginWithPopup until the auth0 client is loaded");
-      }
-
-      const { auth0Client } = state;
-
-      dispatch(loginWithPopupAction.started());
-
-      try {
-        await auth0Client.loginWithPopup(options, config);
-      } catch (error) {
-        console.error(error);
-      }
-
-      const user = await auth0Client.getUser();
-
-      dispatch(loginWithPopupAction.done({ result: { user } }));
-    };
+    const loginWithPopup = buildLoginWithPopup(dispatch, auth0Client);
 
     if (location.search?.includes("code=") && location.search?.includes("state=")) {
       log("Handling redirect");
