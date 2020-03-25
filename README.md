@@ -9,11 +9,11 @@ into React-based applications.
 $ yarn add @developertown/auth0-react-spa-provider
 ```
 
-The library depends on a couple peer dependencies which you'll need to provide if the
-consuming application does not have them already:
+The library depends on a couple peer dependencies which you'll need to provide if your
+application does not have them already:
 
 ```
-yarn add react react-use
+yarn add react react-dom react-use
 ```
 
 ## Usage
