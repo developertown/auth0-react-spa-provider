@@ -1,6 +1,6 @@
 import "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
-import { createContext, Dispatch } from "react";
+import { createContext, Dispatch, ReactElement } from "react";
 
 import { Auth0ProviderAction } from "./actions";
 
@@ -16,6 +16,7 @@ export interface RouteState {
 export interface Auth0ProviderProps extends Auth0ClientOptions {
   enableDebugLogging?: boolean;
   onRedirectCallback?: (state: RouteState) => void;
+  renderLoading?: (state: LoadingState | HandlingRedirectState) => ReactElement;
 }
 
 export type ProviderStateCallbacks = {

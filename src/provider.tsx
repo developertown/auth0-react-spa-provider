@@ -32,6 +32,7 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
   children,
   onRedirectCallback = DefaultRedirectCallback,
   enableDebugLogging,
+  renderLoading,
   ...initOptions
 }) => {
   const log = useLog(enableDebugLogging);
@@ -112,11 +113,13 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
   }, [state, dispatch, onRedirectCallback, log, location.search]);
 
   if (isLoadingState(state)) {
-    return <div>Loading auth0...</div>;
+    log("Rendering loading view due to auth0Client still loading");
+    return (renderLoading && renderLoading(state)) || <></>;
   }
 
   if (isHandlingRedirectState(state)) {
-    return <div>Handling redirect...</div>;
+    log("Rendering loading view due to handling redirect");
+    return (renderLoading && renderLoading(state)) || <></>;
   }
 
   return (
