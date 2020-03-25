@@ -1,8 +1,9 @@
 import createAuth0Client from "@auth0/auth0-spa-js";
-import React, { Reducer, useCallback, useMemo, useReducer } from "react";
+import React, { Reducer, useReducer } from "react";
 import { useAsync, useLocation } from "react-use";
 
 import { auth0Loaded, Auth0ProviderActions, handleRedirectCallbackAction, loginWithPopupAction } from "./actions";
+import { useLog } from "./hooks";
 import { auth0ProviderStateReducer } from "./reducer";
 import {
   Auth0ProviderContext,
@@ -29,10 +30,12 @@ const InitialReducerState: LoadingState = {
 
 export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
   children,
-  onRedirectCallback: onRedirectCallbackProp,
+  onRedirectCallback = DefaultRedirectCallback,
   enableDebugLogging,
   ...initOptions
 }) => {
+  const log = useLog(enableDebugLogging);
+
   const [state, dispatch] = useReducer<Reducer<Auth0ProviderState, Auth0ProviderActions>>(
     auth0ProviderStateReducer,
     InitialReducerState,
@@ -40,19 +43,7 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
 
   const location = useLocation();
 
-  const log = useCallback<typeof console.log>(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (message?: any, ...optionalParams: any[]) => {
-      if (enableDebugLogging) {
-        console.log(message, ...optionalParams);
-      }
-    },
-    [enableDebugLogging],
-  );
-
-  const onRedirectCallback = useMemo(() => onRedirectCallbackProp || DefaultRedirectCallback, [onRedirectCallbackProp]);
-
-  const initAuth0 = useAsync(async () => {
+  useAsync(async () => {
     if (!state.loading && !state.auth0Client) {
       return;
     }
@@ -61,28 +52,24 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
 
     const auth0Client = await createAuth0Client(initOptions);
 
-    if (location.search?.includes("code=") && location.search?.includes("state=")) {
-      const { appState } = await auth0Client.handleRedirectCallback();
-      onRedirectCallback(appState);
-    }
+    const handleRedirectCallback = async (url?: string): Promise<RedirectLoginResult> => {
+      if (isLoadingState(state)) {
+        throw new Error("Unable to loginWithRedirect until the auth0 client is loaded");
+      }
 
-    const isAuthenticated = await auth0Client.isAuthenticated();
+      const { auth0Client } = state;
 
-    const user: TokenUser | undefined = (isAuthenticated && (await auth0Client.getUser())) || undefined;
+      dispatch(handleRedirectCallbackAction.started());
 
-    dispatch(
-      auth0Loaded({
-        user,
-        auth0Client,
-      }),
-    );
+      const response = await auth0Client.handleRedirectCallback(url);
+      const user = await auth0Client.getUser();
 
-    return auth0Client;
-  }, [state, dispatch, onRedirectCallback, log, location.search]);
-  log(initAuth0);
+      dispatch(handleRedirectCallbackAction.done({ result: { user } }));
 
-  const loginWithPopup = useCallback(
-    async (options?: PopupLoginOptions, config?: PopupConfigOptions) => {
+      return response;
+    };
+
+    const loginWithPopup = async (options?: PopupLoginOptions, config?: PopupConfigOptions): Promise<void> => {
       if (isLoadingState(state)) {
         throw new Error("Unable to loginWithPopup until the auth0 client is loaded");
       }
@@ -100,29 +87,29 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
       const user = await auth0Client.getUser();
 
       dispatch(loginWithPopupAction.done({ result: { user } }));
-    },
-    [state, dispatch],
-  );
+    };
 
-  const handleRedirectCallback = useCallback(
-    async (url?: string): Promise<RedirectLoginResult> => {
-      if (isLoadingState(state)) {
-        throw new Error("Unable to loginWithRedirect until the auth0 client is loaded");
-      }
+    if (location.search?.includes("code=") && location.search?.includes("state=")) {
+      log("Handling redirect");
+      const { appState } = await handleRedirectCallback();
+      onRedirectCallback(appState);
+    }
 
-      const { auth0Client } = state;
+    const isAuthenticated = await auth0Client.isAuthenticated();
 
-      dispatch(handleRedirectCallbackAction.started());
+    const user: TokenUser | undefined = (isAuthenticated && (await auth0Client.getUser())) || undefined;
 
-      const response = await auth0Client.handleRedirectCallback(url);
-      const user = await auth0Client.getUser();
+    dispatch(
+      auth0Loaded({
+        user,
+        auth0Client,
+        handleRedirectCallback,
+        loginWithPopup,
+      }),
+    );
 
-      dispatch(handleRedirectCallbackAction.done({ result: { user } }));
-
-      return response;
-    },
-    [state, dispatch],
-  );
+    return auth0Client;
+  }, [state, dispatch, onRedirectCallback, log, location.search]);
 
   if (isLoadingState(state)) {
     return <div>Loading auth0...</div>;
@@ -135,11 +122,7 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
   return (
     <Auth0ProviderContext.Provider
       value={{
-        state: {
-          ...state,
-          handleRedirectCallback,
-          loginWithPopup,
-        },
+        state,
         dispatch,
       }}
     >

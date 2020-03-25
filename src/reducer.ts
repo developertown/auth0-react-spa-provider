@@ -12,7 +12,9 @@ import {
 } from "./types";
 
 export const auth0ProviderStateReducer = reducerWithoutInitialState<Auth0ProviderState>()
-  .case(auth0Loaded, (state, { user, auth0Client }): AuthenticatedState | UnauthenticatedState => {
+  .case(auth0Loaded, (state, { user, auth0Client, handleRedirectCallback, loginWithPopup }):
+    | AuthenticatedState
+    | UnauthenticatedState => {
     if (!isLoadingState(state)) {
       throw new Error("Invalid state: auth0Loaded may only be applied when in the loading state.");
     }
@@ -20,18 +22,19 @@ export const auth0ProviderStateReducer = reducerWithoutInitialState<Auth0Provide
     return {
       ...state,
 
-      loading: false,
       auth0Client,
-      popupOpen: false,
 
-      loginWithPopup: auth0Client.loginWithPopup,
       loginWithRedirect: auth0Client.loginWithRedirect,
       getTokenWithPopup: auth0Client.getTokenWithPopup,
       getTokenSilently: auth0Client.getTokenSilently,
       getIdTokenClaims: auth0Client.getIdTokenClaims,
-      handleRedirectCallback: auth0Client.handleRedirectCallback,
       logout: auth0Client.logout,
 
+      handleRedirectCallback,
+      loginWithPopup,
+
+      loading: false,
+      popupOpen: false,
       user: user || undefined,
       isAuthenticated: Boolean(user),
     } as AuthenticatedState | UnauthenticatedState;

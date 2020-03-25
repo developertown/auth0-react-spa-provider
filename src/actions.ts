@@ -8,6 +8,8 @@ const createAction = actionCreatorFactory("AUTH0_PROVIDER");
 export type Auth0LoadedParams = {
   auth0Client: Auth0Client;
   user?: TokenUser;
+  handleRedirectCallback: Auth0Client["handleRedirectCallback"];
+  loginWithPopup: Auth0Client["loginWithPopup"];
 };
 export const auth0Loaded = createAction<Auth0LoadedParams>("LOADED");
 
