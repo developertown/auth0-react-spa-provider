@@ -1,6 +1,9 @@
 import { render } from "@testing-library/react";
-import React from "react";
-import { useLog } from "../hooks";
+import React, { Dispatch } from "react";
+import { Auth0ProviderAction } from "../actions";
+import * as hooks from "../hooks";
+import { useAuth0, useLog } from "../hooks";
+import { Auth0ProviderState, Auth0ProviderContext } from "../types";
 
 const TestComponent: React.FC<{ debug?: boolean; logMessage?: string }> = ({ debug, logMessage }) => {
   const log = useLog(debug);
@@ -44,6 +47,44 @@ describe("hooks", () => {
       const logString = "test";
       render(<TestComponent debug={true} logMessage={logString} />);
       expect(window.console.log).toBeCalledWith(logString);
+    });
+  });
+
+  describe("useAuth0", () => {
+    it("throws an error if the auth0 context is not present", async () => {
+      const FakeFC: React.FC = () => {
+        const auth0 = useAuth0();
+
+        return <div data-testid="username">{auth0.user?.name}</div>;
+      };
+
+      expect(() => render(<FakeFC />)).toThrowErrorMatchingSnapshot();
+    });
+
+    it("returns the context values if the auth0 context is present", async () => {
+      const mockState = ({ user: { name: "foo" } } as unknown) as Auth0ProviderState;
+      const mockDispatch = {} as Dispatch<Auth0ProviderAction>;
+
+      jest.spyOn(hooks, "useAuth0").mockImplementation(() => mockState);
+
+      const FakeFC: React.FC = () => {
+        const auth0 = useAuth0();
+
+        return <div data-testid="username">{auth0.user?.name}</div>;
+      };
+
+      const App: React.FC = () => {
+        return (
+          <Auth0ProviderContext.Provider value={{ state: mockState, dispatch: mockDispatch }}>
+            <FakeFC />
+          </Auth0ProviderContext.Provider>
+        );
+      };
+
+      const { getByTestId } = await render(<App />);
+      const el = getByTestId("username");
+
+      expect(el.textContent).toEqual(mockState.user?.name);
     });
   });
 });
