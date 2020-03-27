@@ -4,15 +4,13 @@
     "module": "esnext",
     "moduleResolution": "node",
     "declaration": true,
-    "declarationDir": "dist",
+    "outDir": "dist",
     "jsx": "react",
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "strict": true,
-    "noEmit": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "isolatedModules": true,
     "resolveJsonModule": true
   },
   "exclude": ["node_modules", "dist"]

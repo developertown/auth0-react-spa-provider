@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
-  "types": "dist/index.cjs.d.ts",
+  "types": "dist/index.esm.d.ts",
   "files": [
     "src",
     "dist"
@@ -59,10 +59,13 @@
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
+    "@auth0/auth0-spa-js": "^1.7.0-beta.5",
     "history": "^4.10.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-use": "^13.27.0"
+    "react-use": "^13.27.0",
+    "typescript-fsa": "^3.0.0",
+    "typescript-fsa-reducers": "^1.2.1"
   },
   "husky": {
     "hooks": {

@@ -1,11 +1,8 @@
-import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import clear from "rollup-plugin-clear";
-import sourceMaps from "rollup-plugin-sourcemaps";
-import camelCase from "lodash.camelcase";
 import json from "@rollup/plugin-json";
 import ts from "@wessberg/rollup-plugin-ts";
-
+import { builtinModules } from "module";
 import pkg from "./package.json";
 
 module.exports = {
@@ -13,18 +10,21 @@ module.exports = {
   output: [
     {
       file: pkg.main,
-      name: camelCase(pkg.name),
-      format: "umd",
+      format: "cjs",
       sourcemap: true,
-      globals: {
-        react: "React",
-        tslib: "tslib",
-        "react-use": "reactUse",
-      },
     },
-    { file: pkg.module, format: "es", sourcemap: true },
+    {
+      file: pkg.module,
+      format: "esm",
+      sourcemap: true,
+    },
   ],
-  external: [...Object.keys(pkg.devDependencies), ...Object.keys(pkg.peerDependencies)],
+  external: [
+    ...builtinModules,
+    ...(pkg.dependencies ? Object.keys(pkg.dependencies) : []),
+    ...(pkg.devDependencies ? Object.keys(pkg.devDependencies) : []),
+    ...(pkg.peerDependencies ? Object.keys(pkg.peerDependencies) : []),
+  ],
   watch: {
     include: "src/**",
   },
@@ -36,7 +36,5 @@ module.exports = {
     json(), // Compile TypeScript files
     ts(),
     commonjs(),
-    resolve(),
-    sourceMaps(),
   ],
 };
