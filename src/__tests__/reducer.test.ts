@@ -1,3 +1,4 @@
+import * as Auth0 from "@auth0/auth0-spa-js";
 import { auth0Loaded, handleRedirectCallbackAction, loginWithPopupAction } from "../actions";
 import { auth0ProviderStateReducer } from "../reducer";
 import {
@@ -10,16 +11,14 @@ import {
   UnauthenticatedState,
 } from "../types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const createFakeAuth0Client = (): any => {
-  return {
-    loginWithRedirect: jest.fn(),
-    getTokenWithPopup: jest.fn(),
-    getTokenSilently: jest.fn(),
-    getIdTokenClaims: jest.fn(),
-    logout: jest.fn(),
-  };
-};
+jest.mock("@auth0/auth0-spa-js");
+
+const createFakeAuth0Client = (): Auth0.Auth0Client =>
+  new Auth0.Auth0Client({
+    domain: "",
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    client_id: "",
+  });
 
 const createInitialState = (): LoadingState => ({
   loading: true,
@@ -30,7 +29,9 @@ const createInitialState = (): LoadingState => ({
   handlingRedirect: false,
 });
 
-const createFakeUnauthenticatedState = (): UnauthenticatedState => ({
+const createFakeUnauthenticatedState = (
+  auth0Client: Auth0.Auth0Client = createFakeAuth0Client(),
+): UnauthenticatedState => ({
   isAuthenticated: false,
   loading: false,
   loginWithPopup: jest.fn(),
@@ -38,15 +39,12 @@ const createFakeUnauthenticatedState = (): UnauthenticatedState => ({
   handlingRedirect: false,
   user: undefined,
   popupOpen: false,
-  // eslint-disable-next-line @typescript-eslint/camelcase,@typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  auth0Client: {
-    loginWithRedirect: jest.fn(),
-    getTokenWithPopup: jest.fn(),
-    getTokenSilently: jest.fn(),
-    getIdTokenClaims: jest.fn(),
-    logout: jest.fn(),
-  }, //new Auth0Client({ domain: "xyz", client_id: "pdq" }),
+  auth0Client,
+  loginWithRedirect: auth0Client.loginWithRedirect.bind(auth0Client),
+  getTokenWithPopup: auth0Client.getTokenWithPopup.bind(auth0Client),
+  getTokenSilently: auth0Client.getTokenSilently.bind(auth0Client),
+  getIdTokenClaims: auth0Client.getIdTokenClaims.bind(auth0Client),
+  logout: auth0Client.logout.bind(auth0Client),
 });
 
 const createHandlingRedirectState = (): HandlingRedirectState =>

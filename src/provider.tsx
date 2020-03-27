@@ -1,4 +1,4 @@
-import createAuth0Client from "@auth0/auth0-spa-js";
+import createAuth0Client, { PopupConfigOptions, PopupLoginOptions, RedirectLoginResult } from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 import React, { Dispatch, Reducer, useEffect, useReducer } from "react";
 import { useAsync, useAsyncFn, useLocation } from "react-use";
