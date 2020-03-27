@@ -88,12 +88,6 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
 
     const loginWithPopup = buildLoginWithPopup(dispatch, auth0Client);
 
-    // if (location.search?.includes("code=") && location.search?.includes("state=")) {
-    //   log("Handling redirect");
-    //   const { appState } = await handleRedirectCallback();
-    //   onRedirectCallback(appState);
-    // }
-
     const isAuthenticated = await auth0Client.isAuthenticated();
 
     const user: TokenUser | undefined = (isAuthenticated && (await auth0Client.getUser())) || undefined;
