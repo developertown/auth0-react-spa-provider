@@ -59,7 +59,9 @@ describe("hooks", () => {
         return <div data-testid="username">{auth0.user?.name}</div>;
       };
 
-      expect(() => render(<FakeFC />)).toThrowErrorMatchingSnapshot();
+      expect(() => render(<FakeFC />)).toThrowErrorMatchingInlineSnapshot(
+        `"useAuth0 may only be used within the context of an <Auth0Provider />"`,
+      );
     });
 
     it("returns the context values if the auth0 context is present", async () => {
