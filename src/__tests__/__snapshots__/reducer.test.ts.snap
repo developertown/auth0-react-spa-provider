@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`reducer handleRedirectCallbackAction done throws an error if the auth0 state is not in the handling redirect state 1`] = `"Invalid state: handleRedirectCallbackAction.done may only be applied when in the handlingRedirect state."`;
-
-exports[`reducer handleRedirectCallbackAction started throws an error if the auth0 state is not yet fully loaded 1`] = `"Invalid state: handleRedirectCallbackAction.started may only be applied when in a loaded state."`;
-
-exports[`reducer loginWithPopupAction done throws an error if the auth0 state is not yet fully loaded 1`] = `"Invalid state: loginWithPopupAction.done may only be applied when in a loaded state."`;
-
-exports[`reducer loginWithPopupAction started throws an error if the auth0 state is not yet fully loaded 1`] = `"Invalid state: loginWithPopupAction.started may only be applied when in a loaded state."`;

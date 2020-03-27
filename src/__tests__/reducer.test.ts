@@ -68,7 +68,9 @@ describe("reducer", () => {
         const origState = createInitialState();
         expect(() =>
           auth0ProviderStateReducer(origState, loginWithPopupAction.started()),
-        ).toThrowErrorMatchingSnapshot();
+        ).toThrowErrorMatchingInlineSnapshot(
+          `"Invalid state: loginWithPopupAction.started may only be applied when in a loaded state."`,
+        );
       });
     });
 
@@ -98,7 +100,9 @@ describe("reducer", () => {
         const origState = createInitialState();
         expect(() =>
           auth0ProviderStateReducer(origState, loginWithPopupAction.done({ result: { user: undefined } })),
-        ).toThrowErrorMatchingSnapshot();
+        ).toThrowErrorMatchingInlineSnapshot(
+          `"Invalid state: loginWithPopupAction.done may only be applied when in a loaded state."`,
+        );
       });
     });
   });
@@ -116,7 +120,9 @@ describe("reducer", () => {
         const origState = createInitialState();
         expect(() =>
           auth0ProviderStateReducer(origState, handleRedirectCallbackAction.started()),
-        ).toThrowErrorMatchingSnapshot();
+        ).toThrowErrorMatchingInlineSnapshot(
+          `"Invalid state: handleRedirectCallbackAction.started may only be applied when in a loaded state."`,
+        );
       });
     });
 
@@ -143,7 +149,9 @@ describe("reducer", () => {
         const origState = createFakeUnauthenticatedState();
         expect(() =>
           auth0ProviderStateReducer(origState, handleRedirectCallbackAction.done({ result: { user: undefined } })),
-        ).toThrowErrorMatchingSnapshot();
+        ).toThrowErrorMatchingInlineSnapshot(
+          `"Invalid state: handleRedirectCallbackAction.done may only be applied when in the handlingRedirect state."`,
+        );
       });
     });
   });
