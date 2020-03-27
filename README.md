@@ -13,7 +13,7 @@ The library depends on a couple peer dependencies which you'll need to provide i
 application does not have them already:
 
 ```
-yarn add react react-dom react-use
+yarn add react react-dom react-use history
 ```
 
 ## Usage
