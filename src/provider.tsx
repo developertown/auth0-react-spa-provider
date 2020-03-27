@@ -106,8 +106,7 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
     }
 
     log("Handling redirect");
-    const { appState: s } = await state.handleRedirectCallback();
-    const appState: RouteState = s;
+    const { appState } = (await state.handleRedirectCallback()) as { appState: RouteState };
     log("Back from redirect, replacing state to ", appState);
     history.replace(appState.targetUrl);
   }, ["handleRedirectCallback" in state && state.handleRedirectCallback, log, history.replace]);
