@@ -1,7 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`reducer auth0Loaded throws an error if the state is not in the initial loading state 1`] = `"Invalid state: auth0Loaded may only be applied when in the loading state."`;
-
 exports[`reducer handleRedirectCallbackAction done throws an error if the auth0 state is not in the handling redirect state 1`] = `"Invalid state: handleRedirectCallbackAction.done may only be applied when in the handlingRedirect state."`;
 
 exports[`reducer handleRedirectCallbackAction started throws an error if the auth0 state is not yet fully loaded 1`] = `"Invalid state: handleRedirectCallbackAction.started may only be applied when in a loaded state."`;

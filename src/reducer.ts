@@ -8,11 +8,21 @@ import {
   isHandlingRedirectState,
   isLoadedState,
   isLoadingState,
+  LoadingState,
   UnauthenticatedState,
 } from "./types";
 
 export const auth0ProviderStateReducer = reducerWithoutInitialState<Auth0ProviderState>()
-  .case(auth0Loaded, (state, { user, auth0Client, handleRedirectCallback, loginWithPopup }):
+  .case(
+    auth0Loaded.started,
+    (state): LoadingState => {
+      return {
+        ...state,
+        loading: true,
+      } as LoadingState;
+    },
+  )
+  .case(auth0Loaded.done, (state, { result: { user, auth0Client, handleRedirectCallback, loginWithPopup } }):
     | AuthenticatedState
     | UnauthenticatedState => {
     if (!isLoadingState(state)) {
@@ -24,11 +34,11 @@ export const auth0ProviderStateReducer = reducerWithoutInitialState<Auth0Provide
 
       auth0Client,
 
-      loginWithRedirect: auth0Client.loginWithRedirect,
-      getTokenWithPopup: auth0Client.getTokenWithPopup,
-      getTokenSilently: auth0Client.getTokenSilently,
-      getIdTokenClaims: auth0Client.getIdTokenClaims,
-      logout: auth0Client.logout,
+      loginWithRedirect: auth0Client.loginWithRedirect.bind(auth0Client),
+      getTokenWithPopup: auth0Client.getTokenWithPopup.bind(auth0Client),
+      getTokenSilently: auth0Client.getTokenSilently.bind(auth0Client),
+      getIdTokenClaims: auth0Client.getIdTokenClaims.bind(auth0Client),
+      logout: auth0Client.logout.bind(auth0Client),
 
       handleRedirectCallback,
       loginWithPopup,

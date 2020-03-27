@@ -1,5 +1,6 @@
 import "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
+import { History } from "history";
 import { createContext, Dispatch, ReactElement } from "react";
 
 import { Auth0ProviderAction } from "./actions";
@@ -15,7 +16,7 @@ export interface RouteState {
 
 export interface Auth0ProviderProps extends Auth0ClientOptions {
   enableDebugLogging?: boolean;
-  onRedirectCallback?: (state: RouteState) => void;
+  history: History;
   renderLoading?: (state: LoadingState | HandlingRedirectState) => ReactElement;
 }
 
@@ -39,7 +40,7 @@ export type LoadingState = {
 };
 
 export type UnauthenticatedState = ProviderStateCallbacks & {
-  loading: false;
+  loading: boolean;
   isAuthenticated: false;
   popupOpen: boolean;
   user: undefined;
@@ -48,7 +49,7 @@ export type UnauthenticatedState = ProviderStateCallbacks & {
 };
 
 export type AuthenticatedState = ProviderStateCallbacks & {
-  loading: false;
+  loading: boolean;
   isAuthenticated: true;
   popupOpen: boolean;
   user: TokenUser;

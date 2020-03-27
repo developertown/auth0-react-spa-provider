@@ -1,9 +1,10 @@
 import { render } from "@testing-library/react";
 import React, { Dispatch } from "react";
+
 import { Auth0ProviderAction } from "../actions";
 import * as hooks from "../hooks";
 import { useAuth0, useLog } from "../hooks";
-import { Auth0ProviderState, Auth0ProviderContext } from "../types";
+import { Auth0ProviderContext, AuthenticatedState } from "../types";
 
 const TestComponent: React.FC<{ debug?: boolean; logMessage?: string }> = ({ debug, logMessage }) => {
   const log = useLog(debug);
@@ -62,7 +63,7 @@ describe("hooks", () => {
     });
 
     it("returns the context values if the auth0 context is present", async () => {
-      const mockState = ({ user: { name: "foo" } } as unknown) as Auth0ProviderState;
+      const mockState = ({ user: { name: "foo" } } as unknown) as AuthenticatedState;
       const mockDispatch = {} as Dispatch<Auth0ProviderAction>;
 
       jest.spyOn(hooks, "useAuth0").mockImplementation(() => mockState);

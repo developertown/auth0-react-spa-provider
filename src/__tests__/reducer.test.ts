@@ -1,7 +1,6 @@
-import { auth0Loaded, Auth0LoadedParams, handleRedirectCallbackAction, loginWithPopupAction } from "../actions";
+import { auth0Loaded, handleRedirectCallbackAction, loginWithPopupAction } from "../actions";
 import { auth0ProviderStateReducer } from "../reducer";
 import {
-  AuthenticatedState,
   HandlingRedirectState,
   isAuthenticatedState,
   isLoadedState,
@@ -10,6 +9,17 @@ import {
   TokenUser,
   UnauthenticatedState,
 } from "../types";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createFakeAuth0Client = (): any => {
+  return {
+    loginWithRedirect: jest.fn(),
+    getTokenWithPopup: jest.fn(),
+    getTokenSilently: jest.fn(),
+    getIdTokenClaims: jest.fn(),
+    logout: jest.fn(),
+  };
+};
 
 const createInitialState = (): LoadingState => ({
   loading: true,
@@ -28,20 +38,15 @@ const createFakeUnauthenticatedState = (): UnauthenticatedState => ({
   handlingRedirect: false,
   user: undefined,
   popupOpen: false,
-  logout: jest.fn(),
-  getIdTokenClaims: jest.fn(),
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/camelcase,@typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  auth0Client: {}, // new Auth0Client({ domain: "xyz", client_id: "pdq" }),
-  getTokenSilently: jest.fn(),
-  getTokenWithPopup: jest.fn(),
-  loginWithRedirect: jest.fn(),
-});
-
-const createFakeAuthenticatedState = (): AuthenticatedState => ({
-  ...createFakeUnauthenticatedState(),
-  isAuthenticated: true,
-  user: jest.fn(),
+  auth0Client: {
+    loginWithRedirect: jest.fn(),
+    getTokenWithPopup: jest.fn(),
+    getTokenSilently: jest.fn(),
+    getIdTokenClaims: jest.fn(),
+    logout: jest.fn(),
+  }, //new Auth0Client({ domain: "xyz", client_id: "pdq" }),
 });
 
 const createHandlingRedirectState = (): HandlingRedirectState =>
@@ -144,31 +149,25 @@ describe("reducer", () => {
   });
 
   describe("auth0Loaded", () => {
-    it("throws an error if the state is not in the initial loading state", () => {
-      const origState = createFakeAuthenticatedState();
-
-      expect(() =>
-        auth0ProviderStateReducer(origState, auth0Loaded({} as Auth0LoadedParams)),
-      ).toThrowErrorMatchingSnapshot();
-    });
-
     it("sets up the core values properly", () => {
       const origState = createInitialState();
 
       const user: TokenUser = {};
-      const auth0Client = {};
+      const auth0Client = createFakeAuth0Client();
       const handleRedirectCallback = jest.fn();
       const loginWithPopup = jest.fn();
 
       const newState = auth0ProviderStateReducer(
         origState,
-        auth0Loaded({
-          user,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-          // @ts-ignore
-          auth0Client,
-          handleRedirectCallback,
-          loginWithPopup,
+        auth0Loaded.done({
+          result: {
+            user,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            auth0Client,
+            handleRedirectCallback,
+            loginWithPopup,
+          },
         }),
       );
 
@@ -187,19 +186,21 @@ describe("reducer", () => {
       const origState = createInitialState();
 
       const user: TokenUser = {};
-      const auth0Client = {};
+      const auth0Client = createFakeAuth0Client();
       const handleRedirectCallback = jest.fn();
       const loginWithPopup = jest.fn();
 
       const newState = auth0ProviderStateReducer(
         origState,
-        auth0Loaded({
-          user,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-          // @ts-ignore
-          auth0Client,
-          handleRedirectCallback,
-          loginWithPopup,
+        auth0Loaded.done({
+          result: {
+            user,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            auth0Client,
+            handleRedirectCallback,
+            loginWithPopup,
+          },
         }),
       );
 
@@ -210,19 +211,21 @@ describe("reducer", () => {
       const origState = createInitialState();
 
       const user = undefined;
-      const auth0Client = {};
+      const auth0Client = createFakeAuth0Client();
       const handleRedirectCallback = jest.fn();
       const loginWithPopup = jest.fn();
 
       const newState = auth0ProviderStateReducer(
         origState,
-        auth0Loaded({
-          user,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-          // @ts-ignore
-          auth0Client,
-          handleRedirectCallback,
-          loginWithPopup,
+        auth0Loaded.done({
+          result: {
+            user,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            auth0Client,
+            handleRedirectCallback,
+            loginWithPopup,
+          },
         }),
       );
 

@@ -1,4 +1,5 @@
 import { render } from "@testing-library/react";
+import { createBrowserHistory } from "history";
 import React, { ReactElement } from "react";
 import { act } from "react-dom/test-utils";
 
@@ -9,7 +10,7 @@ describe("Auth0Provider", () => {
     it("renders null when no loading view is supplied", async () => {
       await act(async () => {
         const { container } = await render(
-          <Auth0Provider client_id={""} domain={""}>
+          <Auth0Provider client_id={""} domain={""} history={createBrowserHistory()}>
             <div>contents</div>
           </Auth0Provider>,
         );
@@ -26,6 +27,7 @@ describe("Auth0Provider", () => {
             client_id={""}
             domain={""}
             renderLoading={(): ReactElement => <div data-testid="1">loading!</div>}
+            history={createBrowserHistory()}
           >
             <div>contents</div>
           </Auth0Provider>,

@@ -11,7 +11,7 @@ export type Auth0LoadedParams = {
   handleRedirectCallback: Auth0Client["handleRedirectCallback"];
   loginWithPopup: Auth0Client["loginWithPopup"];
 };
-export const auth0Loaded = createAction<Auth0LoadedParams>("LOADED");
+export const auth0Loaded = createAction.async<void, Auth0LoadedParams>("LOADED");
 
 export type LoginWithPopupActionResult = {
   user?: TokenUser;
@@ -26,7 +26,9 @@ export const handleRedirectCallbackAction = createAction.async<void, HandleRedir
 );
 
 export type Auth0ProviderAction =
-  | ReturnType<typeof auth0Loaded>
+  | ReturnType<typeof auth0Loaded.started>
+  | ReturnType<typeof auth0Loaded.done>
+  | ReturnType<typeof auth0Loaded.failed>
   | ReturnType<typeof loginWithPopupAction.started>
   | ReturnType<typeof loginWithPopupAction.done>
   | ReturnType<typeof loginWithPopupAction.failed>

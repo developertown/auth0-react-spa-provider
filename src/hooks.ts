@@ -1,12 +1,16 @@
 import { useCallback, useContext } from "react";
 
-import { Auth0ProviderContext, Auth0ProviderState } from "./types";
+import { Auth0ProviderContext, AuthenticatedState, isLoadedState, UnauthenticatedState } from "./types";
 
-export const useAuth0 = (): Auth0ProviderState => {
+export const useAuth0 = (): AuthenticatedState | UnauthenticatedState => {
   const context = useContext(Auth0ProviderContext);
 
   if (!context) {
     throw new Error("useAuth0 may only be used within the context of an <Auth0Provider />");
+  }
+
+  if (!isLoadedState(context.state)) {
+    throw new Error("useAuth0 may only be used when auth0 has loaded");
   }
 
   return context.state;
