@@ -15,7 +15,6 @@ describe("Auth0Provider", () => {
           </Auth0Provider>,
         );
 
-        // console.log(x.container.childElementCount);
         expect(container.childElementCount).toEqual(0);
       });
     });

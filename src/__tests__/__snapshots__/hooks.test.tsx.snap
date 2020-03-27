@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`hooks useAuth0 throws an error if the auth0 context is not present 1`] = `"useAuth0 may only be used within the context of an <Auth0Provider />"`;
