@@ -98,7 +98,7 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
       handleRedirectCallback,
       loginWithPopup,
     };
-  }, []);
+  }, [dispatch, log]);
 
   const [handleRedirAsyncState, handleRedirAsync] = useAsyncFn(async () => {
     if (!isLoadedState(state)) {
