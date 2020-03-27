@@ -1,4 +1,4 @@
-import "@auth0/auth0-spa-js";
+import { Auth0ClientOptions } from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 import { History } from "history";
 import { createContext, Dispatch, ReactElement } from "react";
