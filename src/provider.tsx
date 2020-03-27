@@ -132,12 +132,12 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
 
   if (isLoadingState(state)) {
     log("Rendering loading view due to auth0Client still loading");
-    return (renderLoading && renderLoading(state)) || <></>;
+    return (renderLoading && renderLoading(state)) || null;
   }
 
   if (isHandlingRedirectState(state)) {
     log("Rendering loading view due to handling redirect");
-    return (renderLoading && renderLoading(state)) || <></>;
+    return (renderLoading && renderLoading(state)) || null;
   }
 
   return (
